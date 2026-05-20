@@ -1,9 +1,3 @@
-databases:
-  - name: scholarship-db
-    databaseName: scholarship_system
-    user: scholarship_user
-    plan: free
-
 services:
   - type: web
     name: scholarship-system
@@ -16,29 +10,12 @@ services:
       - key: APP_DEBUG
         value: "false"
       - key: APP_URL
-        # Render provides this via RENDER_EXTERNAL_URL
         sync: false
       - key: APP_KEY
         generateValue: true
       - key: DB_CONNECTION
         value: pgsql
-      - key: DB_HOST
-        fromDatabase:
-          name: scholarship-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: scholarship-db
-          property: port
-      - key: DB_DATABASE
-        fromDatabase:
-          name: scholarship-db
-          property: database
-      - key: DB_USERNAME
-        fromDatabase:
-          name: scholarship-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: scholarship-db
-          property: password
+      - key: DATABASE_URL
+        sync: false # You will provide the Internal Database URL from MediQ DB here
+      - key: DB_PREFIX
+        value: "scholarship_"
