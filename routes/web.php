@@ -37,6 +37,10 @@ Route::middleware(['auth', 'verified', 'role:student'])->prefix('student')->name
         return Inertia::render('Student/Dashboard', ['applications' => $applications]);
     })->name('dashboard');
     Route::get('/application/{application}/receipt', [\App\Http\Controllers\PdfController::class, 'downloadReceipt'])->name('application.receipt');
+    
+    // New Application Routes
+    Route::get('/apply', [\App\Http\Controllers\StudentController::class, 'create'])->name('apply');
+    Route::post('/apply', [\App\Http\Controllers\StudentController::class, 'store']);
 });
 
 // Institution Routes
