@@ -1,12 +1,10 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 
 export default function Dashboard({ auth, institution, applications }) {
-    const { post } = useForm();
-
     const handleVerify = (id, status) => {
-        post(route('institution.application.verify', id), {
-            data: { status }
+        router.post(route('institution.application.verify', id), {
+            status: status
         });
     };
 
