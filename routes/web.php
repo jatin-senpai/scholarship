@@ -45,9 +45,8 @@ Route::middleware(['auth', 'verified', 'role:student'])->prefix('student')->name
 
 // Institution Routes
 Route::middleware(['auth', 'verified', 'role:institution'])->prefix('institution')->name('institution.')->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Institution/Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\InstitutionController::class, 'dashboard'])->name('dashboard');
+    Route::post('/application/{id}/verify', [\App\Http\Controllers\InstitutionController::class, 'verifyApplication'])->name('application.verify');
 });
 
 // Admin Routes (State & Super Admin)

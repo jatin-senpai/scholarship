@@ -1,7 +1,13 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Dashboard({ auth, pendingInstitutions, verifiedInstitutions, stats }) {
+    const { post } = useForm();
+
+    const handleVerify = (id) => {
+        post(route('admin.institution.verify', id));
+    };
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -59,7 +65,7 @@ export default function Dashboard({ auth, pendingInstitutions, verifiedInstituti
                                         {pendingInstitutions.map((inst) => (
                                             <li key={inst.id} className="flex justify-between items-center bg-white/5 p-3 rounded-lg border border-white/5">
                                                 <span>{inst.name}</span>
-                                                <button className="text-emerald-400 hover:text-emerald-300 font-semibold underline">Verify</button>
+                                                <button onClick={() => handleVerify(inst.id)} className="text-emerald-400 hover:text-emerald-300 font-semibold underline">Verify</button>
                                             </li>
                                         ))}
                                     </ul>

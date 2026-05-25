@@ -58,4 +58,34 @@ class InstitutionController extends Controller
 
         return redirect()->route('institution.dashboard');
     }
+
+    public function dashboard(Request $request)
+    {
+        $institution = Institution::where('name', $request->user()->name)
+                                  ->where('state_id', $request->user()->state_id)
+                                  ->first();
+
+        $applications = [];
+        if ($institution) {
+            $applications = \App\Models\Application::with(['student.user', 'scholarship'])
+                ->where('institution_id', $institution->id)
+                ->get();
+        }
+
+        return Inertia::render('Institution/Dashboard', [
+            'institution' => $institution,
+            'applications' => $applications,
+        ]);
+    }
+
+    public function verifyApplication(Request $request, $id)
+    {
+        $request->validate(['status' => 'required|in:institution_verified,rejected']);
+        
+        $application = \App\Models\Application::findOrFail($id);
+        $application->status = $request->status;
+        $application->save();
+
+        return redirect()->route('institution.dashboard')->with('success', 'Application status updated.');
+    }
 }
