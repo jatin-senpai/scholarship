@@ -21,6 +21,11 @@ return new class extends Migration
             DB::table('states')->updateOrInsert(['code' => $state['code']], $state);
         }
 
+        // Get state IDs dynamically
+        $maharashtraId = DB::table('states')->where('code', 'MH')->value('id');
+        $karnatakaId = DB::table('states')->where('code', 'KA')->value('id');
+        $delhiId = DB::table('states')->where('code', 'DL')->value('id');
+
         // Insert Default Scholarships
         $scholarships = [
             [
@@ -28,21 +33,24 @@ return new class extends Migration
                 'description' => 'Scholarship for minority community students studying in Class 11 to Ph.D.',
                 'amount' => 15000.00,
                 'deadline' => now()->addMonths(3),
-                'criteria' => json_encode(['min_marks' => 50, 'max_income' => 200000]),
+                'eligibility' => json_encode(['min_marks' => 50, 'max_income' => 200000]),
+                'state_id' => $maharashtraId,
             ],
             [
                 'title' => 'Merit-cum-Means Scholarship for Professional and Technical Courses',
                 'description' => 'Scholarship for students pursuing technical and professional courses at UG/PG level.',
                 'amount' => 30000.00,
                 'deadline' => now()->addMonths(2),
-                'criteria' => json_encode(['min_marks' => 60, 'max_income' => 250000]),
+                'eligibility' => json_encode(['min_marks' => 60, 'max_income' => 250000]),
+                'state_id' => $karnatakaId,
             ],
             [
                 'title' => 'Central Sector Scheme of Scholarships for College and University Students',
                 'description' => 'Financial assistance to meritorious students from low income families.',
                 'amount' => 12000.00,
                 'deadline' => now()->addMonths(1),
-                'criteria' => json_encode(['min_marks' => 80, 'max_income' => 450000]),
+                'eligibility' => json_encode(['min_marks' => 80, 'max_income' => 450000]),
+                'state_id' => $delhiId,
             ],
         ];
 

@@ -83,7 +83,7 @@ export default function Dashboard({ auth, applications }) {
                             ) : (
                                 <div className="text-center py-8 text-slate-400">
                                     <p>You haven't applied for any scholarships yet.</p>
-                                    <Link href="/student/scholarships" className="text-indigo-400 hover:text-indigo-300 mt-2 inline-block underline">
+                                    <Link href="/student/apply" className="text-indigo-400 hover:text-indigo-300 mt-2 inline-block underline">
                                         Browse available scholarships
                                     </Link>
                                 </div>
