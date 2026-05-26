@@ -73,14 +73,17 @@ require __DIR__.'/auth.php';
 
 Route::get('/seed-db-temp', function () {
     try {
-        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--seed' => true]);
+        $exitCode = \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--seed' => true]);
+        $output = \Illuminate\Support\Facades\Artisan::output();
         
         $connection = \Illuminate\Support\Facades\DB::getDefaultConnection();
         $dbName = \Illuminate\Support\Facades\DB::connection()->getDatabaseName();
         $users = \App\Models\User::all(['id', 'name', 'email', 'role'])->toArray();
         
         return response()->json([
-            'status' => 'Database migrated and seeded successfully!',
+            'status' => 'Command executed',
+            'exit_code' => $exitCode,
+            'output' => explode("\n", $output),
             'connection' => $connection,
             'database_name' => $dbName,
             'users' => $users,
