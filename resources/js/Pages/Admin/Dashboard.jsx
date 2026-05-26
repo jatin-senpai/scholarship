@@ -91,7 +91,7 @@ export default function Dashboard({ auth, pendingInstitutions, verifiedInstituti
                                         <div className="flex items-end justify-around h-44 pt-4 border-b border-white/10 px-4">
                                             {(() => {
                                                 const stateMap = {};
-                                                applications.forEach(app => {
+                                                (applications || []).filter(Boolean).forEach(app => {
                                                     const sName = app.student?.homeState?.name || app.student?.home_state?.name || app.student?.homeState?.code || app.student?.home_state?.code || `State #${app.student?.home_state_id || 'Unknown'}`;
                                                     if (!stateMap[sName]) stateMap[sName] = { total: 0, approved: 0 };
                                                     stateMap[sName].total += 1;
@@ -125,7 +125,7 @@ export default function Dashboard({ auth, pendingInstitutions, verifiedInstituti
                                                                 ></div>
                                                             </div>
                                                             <span className="text-[10px] text-slate-400 mt-2 font-medium tracking-wider uppercase truncate max-w-full text-center">
-                                                                {state.name.substring(0, 8)}
+                                                                {String(state.name || '').substring(0, 8)}
                                                             </span>
                                                         </div>
                                                     );
