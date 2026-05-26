@@ -34,8 +34,13 @@ Route::middleware(['auth', 'verified', 'role:student'])->prefix('student')->name
     Route::get('/dashboard', function (Illuminate\Http\Request $request) {
         $student = $request->user()->student;
         $applications = $student ? \App\Models\Application::with('scholarship')->where('student_id', $student->id)->get() : collect();
-        return Inertia::render('Student/Dashboard', ['applications' => $applications]);
+        $notifications = $request->user()->unreadNotifications;
+        return Inertia::render('Student/Dashboard', [
+            'applications' => $applications,
+            'notifications' => $notifications,
+        ]);
     })->name('dashboard');
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\StudentController::class, 'readNotification'])->name('notifications.read');
     Route::get('/application/{application}/receipt', [\App\Http\Controllers\PdfController::class, 'downloadReceipt'])->name('application.receipt');
     
     // New Application Routes
@@ -53,6 +58,8 @@ Route::middleware(['auth', 'verified', 'role:institution'])->prefix('institution
 Route::middleware(['auth', 'verified', 'role:super_admin,state_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');
     Route::post('/institution/{id}/verify', [\App\Http\Controllers\AdminController::class, 'verifyInstitution'])->name('institution.verify');
+    Route::post('/application/{id}/verify-state', [\App\Http\Controllers\AdminController::class, 'verifyApplication'])->name('application.verifyState');
+    Route::post('/application/{id}/disburse', [\App\Http\Controllers\AdminController::class, 'approveAndDisburse'])->name('application.disburse');
     Route::get('/institution/{institution}/report', [\App\Http\Controllers\PdfController::class, 'downloadInstitutionReport'])->name('institution.report');
 });
 

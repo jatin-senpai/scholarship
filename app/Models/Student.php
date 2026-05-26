@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
-    protected $fillable = ['user_id', 'home_state_id', 'studying_state_id', 'institution_id', 'documents'];
+    protected $fillable = ['user_id', 'home_state_id', 'studying_state_id', 'institution_id', 'documents', 'marks_percentage', 'annual_income'];
     protected $casts = ['documents' => 'array'];
 
     public function user() { return $this->belongsTo(User::class); }

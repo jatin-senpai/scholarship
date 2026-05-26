@@ -1,9 +1,26 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
 
-export default function Dashboard({ auth, pendingInstitutions, verifiedInstitutions, stats }) {
+export default function Dashboard({ auth, pendingInstitutions, verifiedInstitutions, applications = [], stats }) {
     const handleVerify = (id) => {
         router.post(route('admin.institution.verify', id));
+    };
+
+    const handleVerifyState = (id) => {
+        router.post(route('admin.application.verifyState', id));
+    };
+
+    const handleDisburse = (id) => {
+        router.post(route('admin.application.disburse', id));
+    };
+
+    const parseRemarks = (remarks) => {
+        if (!remarks) return {};
+        try {
+            return JSON.parse(remarks);
+        } catch (e) {
+            return { text: remarks };
+        }
     };
 
     return (
@@ -92,6 +109,104 @@ export default function Dashboard({ auth, pendingInstitutions, verifiedInstituti
                                     </div>
                                 )}
                             </div>
+                        </div>
+
+                        {/* Applications Verification & Funds Disbursal Workspace */}
+                        <div className="bg-black/20 rounded-xl p-6 border border-white/5 mt-8">
+                            <h4 className="text-lg font-bold mb-4 flex items-center text-indigo-300">
+                                <svg className="w-5 h-5 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                                Applications Verification & Funds Disbursal Workspace ({applications.length})
+                            </h4>
+                            {applications && applications.length > 0 ? (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse text-sm">
+                                        <thead>
+                                            <tr className="border-b border-white/10 text-slate-300">
+                                                <th className="pb-3 font-semibold">ID</th>
+                                                <th className="pb-3 font-semibold">Student Name & State</th>
+                                                <th className="pb-3 font-semibold">Scholarship</th>
+                                                <th className="pb-3 font-semibold">Academic Details</th>
+                                                <th className="pb-3 font-semibold">Status</th>
+                                                <th className="pb-3 font-semibold text-right">Actions / Transactions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {applications.map((app) => {
+                                                const remarksObj = parseRemarks(app.remarks);
+                                                return (
+                                                    <tr key={app.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                                        <td className="py-4">#{app.id.toString().padStart(6, '0')}</td>
+                                                        <td className="py-4">
+                                                            <div className="font-semibold text-white">{app.student.user.name}</div>
+                                                            <div className="text-xs text-slate-400">Domicile: {app.student.home_state?.name || app.student.home_state_id}</div>
+                                                            <div className="text-xs text-slate-400">Institution: {app.institution.name}</div>
+                                                        </td>
+                                                        <td className="py-4">
+                                                            <div className="text-white font-medium">{app.scholarship.title}</div>
+                                                            <div className="text-xs text-slate-400">Amount: ₹{parseFloat(app.scholarship.amount).toLocaleString('en-IN')}</div>
+                                                        </td>
+                                                        <td className="py-4">
+                                                            <div className="text-xs text-slate-300">Marks: <span className="font-bold text-indigo-300">{app.student.marks_percentage}%</span></div>
+                                                            <div className="text-xs text-slate-300">Income: <span className="font-bold text-amber-300">₹{parseFloat(app.student.annual_income).toLocaleString('en-IN')}</span></div>
+                                                        </td>
+                                                        <td className="py-4">
+                                                            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                                                                app.status === 'approved' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+                                                                app.status === 'rejected' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
+                                                                app.status === 'state_verified' ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' :
+                                                                app.status === 'institution_verified' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
+                                                                'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                                            }`}>
+                                                                {app.status === 'state_verified' ? 'State Verified' :
+                                                                 app.status === 'institution_verified' ? 'Institution Verified' :
+                                                                 app.status}
+                                                            </span>
+                                                        </td>
+                                                        <td className="py-4 text-right">
+                                                            {app.status === 'institution_verified' && (
+                                                                <button
+                                                                    onClick={() => handleVerifyState(app.id)}
+                                                                    className="bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 transition-all px-4 py-1.5 rounded-full font-semibold text-xs"
+                                                                >
+                                                                    Verify (State Level)
+                                                                </button>
+                                                            )}
+                                                            {app.status === 'state_verified' && (
+                                                                <button
+                                                                    onClick={() => handleDisburse(app.id)}
+                                                                    className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 transition-all px-4 py-1.5 rounded-full font-semibold text-xs animate-pulse"
+                                                                >
+                                                                    Approve & Disburse
+                                                                </button>
+                                                            )}
+                                                            {app.status === 'approved' && remarksObj.transaction_id && (
+                                                                <div className="inline-block text-left">
+                                                                    <div className="text-xs text-emerald-400 font-bold flex items-center justify-end">
+                                                                        <span className="mr-1">✓</span> Disbursed
+                                                                    </div>
+                                                                    <div className="text-[10px] font-mono text-slate-400 bg-black/40 border border-white/5 px-2 py-0.5 rounded mt-1">
+                                                                        {remarksObj.transaction_id}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            {app.status === 'submitted' && (
+                                                                <span className="text-xs text-slate-500 italic">Awaiting Inst. Verification</span>
+                                                            )}
+                                                            {app.status === 'rejected' && (
+                                                                <span className="text-xs text-rose-400 italic">Rejected</span>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 text-slate-500 text-sm">
+                                    <p>No scholarship applications recorded yet.</p>
+                                </div>
+                            )}
                         </div>
 
                     </div>

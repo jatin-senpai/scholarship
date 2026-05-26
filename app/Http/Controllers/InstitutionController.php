@@ -86,6 +86,16 @@ class InstitutionController extends Controller
         $application->status = $request->status;
         $application->save();
 
+        // Send Notification to Student
+        $studentUser = $application->student->user;
+        if ($studentUser) {
+            $statusText = $request->status === 'institution_verified' ? 'verified by the Institution' : 'rejected by the Institution';
+            $studentUser->notify(new \App\Notifications\ApplicationStatusChanged(
+                $application,
+                "Your application for '{$application->scholarship->title}' has been {$statusText}."
+            ));
+        }
+
         return redirect()->route('institution.dashboard')->with('success', 'Application status updated.');
     }
 }
