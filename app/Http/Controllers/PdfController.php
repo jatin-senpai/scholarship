@@ -38,4 +38,62 @@ class PdfController extends Controller
 
         return $pdf->download('institution_report_' . $institution->id . '.pdf');
     }
+
+    public function downloadSystemReport()
+    {
+        // Ensure user is admin
+        if (!in_array(auth()->user()->role, ['super_admin', 'state_admin'])) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $user = auth()->user();
+        
+        if ($user->role === 'state_admin') {
+            $statesCount = 1;
+            $verifiedInstitutions = Institution::with('state')
+                ->where('state_id', $user->state_id)
+                ->where('status', 'verified')
+                ->get();
+            $activeStudentsCount = \App\Models\Student::where('home_state_id', $user->state_id)->count();
+            
+            $applications = Application::with(['student.user', 'student.homeState', 'scholarship', 'institution'])
+                ->whereHas('student', function ($query) use ($user) {
+                    $query->where('home_state_id', $user->state_id);
+                })
+                ->get();
+                
+            $totalDisbursed = Application::where('status', 'approved')
+                ->whereHas('student', function ($query) use ($user) {
+                    $query->where('home_state_id', $user->state_id);
+                })
+                ->join('scholarships', 'applications.scholarship_id', '=', 'scholarships.id')
+                ->sum('amount');
+                
+            $scope = $user->state ? $user->state->name . ' State Scope' : 'State Admin Scope';
+        } else {
+            // Super Admin
+            $statesCount = \App\Models\State::count();
+            $verifiedInstitutions = Institution::with('state')->where('status', 'verified')->get();
+            $activeStudentsCount = \App\Models\Student::count();
+            
+            $applications = Application::with(['student.user', 'student.homeState', 'scholarship', 'institution'])->get();
+            
+            $totalDisbursed = Application::where('status', 'approved')
+                ->join('scholarships', 'applications.scholarship_id', '=', 'scholarships.id')
+                ->sum('amount');
+                
+            $scope = 'System-Wide Global Scope';
+        }
+
+        $pdf = Pdf::loadView('pdf.system_report', compact(
+            'statesCount',
+            'verifiedInstitutions',
+            'activeStudentsCount',
+            'applications',
+            'totalDisbursed',
+            'scope'
+        ));
+
+        return $pdf->download('system_report_' . now()->format('Y_m_d') . '.pdf');
+    }
 }
