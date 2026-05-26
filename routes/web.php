@@ -61,6 +61,7 @@ Route::middleware(['auth', 'verified', 'role:super_admin,state_admin'])->prefix(
     Route::post('/application/{id}/verify-state', [\App\Http\Controllers\AdminController::class, 'verifyApplication'])->name('application.verifyState');
     Route::post('/application/{id}/disburse', [\App\Http\Controllers\AdminController::class, 'approveAndDisburse'])->name('application.disburse');
     Route::get('/institution/{institution}/report', [\App\Http\Controllers\PdfController::class, 'downloadInstitutionReport'])->name('institution.report');
+    Route::get('/report/system', [\App\Http\Controllers\PdfController::class, 'downloadSystemReport'])->name('system.report');
 });
 
 Route::middleware('auth')->group(function () {
