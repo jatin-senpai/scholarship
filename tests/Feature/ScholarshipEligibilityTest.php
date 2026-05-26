@@ -39,7 +39,7 @@ class ScholarshipEligibilityTest extends TestCase
         $this->adminUser = User::create([
             'name' => 'MH State Admin',
             'email' => 'admin@mh.gov.in',
-            'password' => bcrypt('password'),
+            'password' => 'password',
             'role' => 'state_admin',
             'state_id' => $this->stateMh->id,
         ]);
@@ -48,7 +48,7 @@ class ScholarshipEligibilityTest extends TestCase
         $this->institutionUser = User::create([
             'name' => 'VJTI',
             'email' => 'vjti@edu.in',
-            'password' => bcrypt('password'),
+            'password' => 'password',
             'role' => 'institution',
             'state_id' => $this->stateMh->id,
         ]);
@@ -64,7 +64,7 @@ class ScholarshipEligibilityTest extends TestCase
         $this->studentUser = User::create([
             'name' => 'Jay Kumar',
             'email' => 'jay@student.com',
-            'password' => bcrypt('password'),
+            'password' => 'password',
             'role' => 'student',
         ]);
 

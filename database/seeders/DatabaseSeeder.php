@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Super Admin',
             'email' => 'admin@scholarship.com',
-            'password' => bcrypt('password'),
+            'password' => 'password',
             'role' => 'super_admin',
         ]);
 
@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'MH State Admin',
             'email' => 'mh_admin@scholarship.com',
-            'password' => bcrypt('password'),
+            'password' => 'password',
             'role' => 'state_admin',
             'state_id' => 1,
         ]);
@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Demo Institution',
             'email' => 'institution@demo.com',
-            'password' => bcrypt('password'),
+            'password' => 'password',
             'role' => 'institution',
             'state_id' => 2, // KA
         ]);
@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Demo Student',
             'email' => 'student@demo.com',
-            'password' => bcrypt('password'),
+            'password' => 'password',
             'role' => 'student',
         ]);
     }
