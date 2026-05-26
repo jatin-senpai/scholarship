@@ -265,17 +265,17 @@ export default function Dashboard({ auth, pendingInstitutions, verifiedInstituti
                                                     <tr key={app.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                                         <td className="py-4">#{app.id.toString().padStart(6, '0')}</td>
                                                         <td className="py-4">
-                                                            <div className="font-semibold text-white">{app.student.user.name}</div>
-                                                            <div className="text-xs text-slate-400">Domicile: {app.student.home_state?.name || app.student.home_state_id}</div>
-                                                            <div className="text-xs text-slate-400">Institution: {app.institution.name}</div>
+                                                            <div className="font-semibold text-white">{app.student?.user?.name || 'Unknown Student'}</div>
+                                                            <div className="text-xs text-slate-400">Domicile: {app.student?.homeState?.name || app.student?.home_state?.name || app.student?.home_state_id || 'Unknown'}</div>
+                                                            <div className="text-xs text-slate-400">Institution: {app.institution?.name || 'Unknown Institution'}</div>
                                                         </td>
                                                         <td className="py-4">
-                                                            <div className="text-white font-medium">{app.scholarship.title}</div>
-                                                            <div className="text-xs text-slate-400">Amount: ₹{parseFloat(app.scholarship.amount).toLocaleString('en-IN')}</div>
+                                                            <div className="text-white font-medium">{app.scholarship?.title || 'Unknown Scholarship'}</div>
+                                                            <div className="text-xs text-slate-400">Amount: ₹{app.scholarship?.amount ? parseFloat(app.scholarship.amount).toLocaleString('en-IN') : '0.00'}</div>
                                                         </td>
                                                         <td className="py-4">
-                                                            <div className="text-xs text-slate-300">Marks: <span className="font-bold text-indigo-300">{app.student.marks_percentage}%</span></div>
-                                                            <div className="text-xs text-slate-300">Income: <span className="font-bold text-amber-300">₹{parseFloat(app.student.annual_income).toLocaleString('en-IN')}</span></div>
+                                                            <div className="text-xs text-slate-300">Marks: <span className="font-bold text-indigo-300">{app.student?.marks_percentage || '0'}%</span></div>
+                                                            <div className="text-xs text-slate-300">Income: <span className="font-bold text-amber-300">₹{app.student?.annual_income ? parseFloat(app.student.annual_income).toLocaleString('en-IN') : '0.00'}</span></div>
                                                         </td>
                                                         <td className="py-4">
                                                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
