@@ -92,7 +92,7 @@ export default function Dashboard({ auth, pendingInstitutions, verifiedInstituti
                                             {(() => {
                                                 const stateMap = {};
                                                 applications.forEach(app => {
-                                                    const sName = app.student?.home_state?.name || app.student?.home_state?.code || `State #${app.student?.home_state_id}` || 'Unknown';
+                                                    const sName = app.student?.homeState?.name || app.student?.home_state?.name || app.student?.homeState?.code || app.student?.home_state?.code || `State #${app.student?.home_state_id || 'Unknown'}`;
                                                     if (!stateMap[sName]) stateMap[sName] = { total: 0, approved: 0 };
                                                     stateMap[sName].total += 1;
                                                     if (app.status === 'approved') stateMap[sName].approved += 1;
@@ -224,7 +224,7 @@ export default function Dashboard({ auth, pendingInstitutions, verifiedInstituti
                                     <ul className="space-y-3 text-sm">
                                         {verifiedInstitutions.map((inst) => (
                                             <li key={inst.id} className="flex justify-between items-center bg-white/5 p-3 rounded-lg border border-white/5">
-                                                <span>{inst.name} ({inst.state.code})</span>
+                                                <span>{inst.name} ({inst.state?.code || 'Unknown'})</span>
                                                 <a href={`/admin/institution/${inst.id}/report`} className="text-indigo-400 hover:text-indigo-300 font-semibold underline">
                                                     Download Report
                                                 </a>
